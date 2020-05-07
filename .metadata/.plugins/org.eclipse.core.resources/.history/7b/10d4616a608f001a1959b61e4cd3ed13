@@ -1,0 +1,122 @@
+package com.ebanking.keyword;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.ebanking.master.Library;
+
+public class Keywoodjava {
+
+	public static void main(String[] args) throws IOException, InterruptedException {
+		
+		
+		Library Lb=new Library();
+		
+		String Res=null;
+		
+		String Kpath="C:\\Users\\mkdvv\\Desktop\\Project Workspace\\E banking\\src\\com\\ebanking\\keyword\\keyword_data.xlsx";
+		
+		String Kout="C:\\Users\\mkdvv\\Desktop\\Project Workspace\\E banking\\src\\com\\ebanking\\keyword\\Res_keyword.xlsx";
+		
+		FileInputStream Fis=new FileInputStream(Kpath);
+		
+		XSSFWorkbook WB=new XSSFWorkbook(Fis);
+		
+		XSSFSheet WS=WB.getSheet("Testcase");
+		XSSFSheet WS1=WB.getSheet("Teststeps");
+		
+		int tcRc=WS.getLastRowNum();
+		System.out.println(tcRc);
+		
+		int tsRc=WS1.getLastRowNum();
+		System.out.println(tsRc);
+		
+		for (int i=1;i<=tcRc; i++) {
+			
+			String exe=WS.getRow(i).getCell(2).getStringCellValue();
+			if (exe.equalsIgnoreCase("Y")) {
+				
+				String tcId=WS.getRow(i).getCell(0).getStringCellValue();
+				System.out.println(tcId);
+				
+				
+				for (int j=1;j<=tsRc;j++) {
+				
+					String tsTcId=WS1.getRow(j).getCell(0).getStringCellValue();
+					if (tcId.equalsIgnoreCase(tsTcId)) {
+						String key=WS1.getRow(j).getCell(3).getStringCellValue();
+						System.out.println(key);
+						switch (key)
+						{
+						
+						case "RLanch":
+						Res=Lb.OpenApp("http://183.82.100.55/ranford2/");
+						break;
+							
+						case "RLogin":
+						Res=Lb.AdminLogin("Admin","M1ndq");
+						break;
+							
+						case "RLogout":
+						Lb.Logout();
+						break;
+						
+						case "RBranch":
+						Res=Lb.Branchcreation("Srnagar","Mainroad","50062","INDIA","Andhra Pradesh","Hyderabad");
+						break;
+						
+						case "RRole":
+						Res=Lb.Rolecreation("Cashierk", "E");
+						break;
+						
+						case "RClose":
+						Lb.Close();
+						break;
+						
+						default:
+						System.out.println("Pass a Valid Keyword");
+						break;
+						}
+					
+					// Teststeps results
+					WS1.getRow(j).createCell(4).setCellValue(Res);
+					
+					// Tesecase results
+					if (WS1.getRow(j).createCell(4).getStringCellValue().equalsIgnoreCase("Pass"))
+						
+					{
+						WS.getRow(i).createCell(3).setCellValue(Res);
+					}
+						
+					
+					 else {
+						 WS.getRow(i).createCell(3).setCellValue("Fail");
+					 }
+						 
+					 }
+				}
+			}
+			 				
+			 else {
+				WS.getRow(i).createCell(3).setCellValue("Blocked");
+			}
+				}
+			
+			
+				
+			FileOutputStream Fos=new FileOutputStream(Kout);
+			WB.write(Fos);
+			WB.close();
+		}
+}
+		
+		
+			
+	
+		
+

@@ -1,0 +1,198 @@
+package com.ebanking.master;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
+
+import javax.swing.plaf.metal.MetalIconFactory.FileIcon16;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.Select;
+
+public class Library {
+
+	public static WebDriver driver;
+	public static String expval,Actval;
+	public static FileInputStream Fis;
+	public static Properties Pr;
+	
+	
+public String OpenApp(String URL) throws IOException
+{
+	Fis=new FileInputStream("C:\\Users\\mkdvv\\Desktop\\Project Workspace\\E banking\\src\\com\\ebanking\\properties\\Repository.properties");
+	Pr=new Properties();
+	Pr.load(Fis);
+	
+	
+	
+	expval="Ranford Bank";
+	driver =new FirefoxDriver();
+	driver.get(URL);
+	driver.manage().window().maximize();
+	Actval= driver.findElement(By.xpath("/html/body/form/table/tbody/tr/td/table/tbody/tr[4]/td/table/tbody/tr[1]/td[4]/p/span")).getText();
+	// Comparison
+	if (expval.equalsIgnoreCase(Actval)) {
+		System.out.println("Ranford application launch");
+		return "pass";
+		
+	}
+	else
+	{
+		System.out.println("Ranford application not launch");
+		return "fail";
+	}
+	
+	
+}
+
+public String AdminLogin(String Un,String Pwd)
+{
+expval="Welcome to Admin";
+	
+	driver.findElement(By.id(Pr.getProperty("Uname"))).sendKeys(Un);
+	driver.findElement(By.id(Pr.getProperty("Pswd"))).sendKeys(Pwd);
+	driver.findElement(By.id(Pr.getProperty("Lgn"))).click();
+	Actval= driver.findElement(By.xpath("/html/body/table/tbody/tr/td/table/tbody/tr[4]/td/table/tbody/tr[1]/td[4]/strong/font/font")).getText();
+	if (expval.equalsIgnoreCase(Actval))
+	{
+		System.out.println("Admin Homepage launch");
+	return "pass";
+	}else
+	{
+		System.out.println("Admin Homepage not launch");
+	
+	return "fail";
+	}
+
+}
+
+public String Branchcreation(String Bn,String Add,String Zip,String Crty,String Sat,String cty) throws InterruptedException
+
+{
+	expval="Sucessfully";
+	driver.findElement(By.xpath(Pr.getProperty("Bbutton"))).click();
+    driver.findElement(By.xpath(Pr.getProperty("Nbbutton"))).click();
+    driver.findElement(By.id(Pr.getProperty("bname"))).sendKeys(Bn);
+    driver.findElement(By.id(Pr.getProperty("Add1"))).sendKeys(Add);
+    driver.findElement(By.id(Pr.getProperty("Zip"))).sendKeys(Zip);
+   
+    //dropdown
+    Select ctry=new Select(driver.findElement(By.id(Pr.getProperty("Ctry"))));
+    ctry.selectByVisibleText(Crty);
+    Select sta=new Select(driver.findElement(By.id(Pr.getProperty("Sta"))));
+    sta.selectByVisibleText(Sat);
+    Select city=new Select(driver.findElement(By.id(Pr.getProperty("City"))));
+    city.selectByVisibleText(cty);
+    driver.findElement(By.id(Pr.getProperty("BSbutton"))).click();
+    
+    Thread.sleep(4000);
+    Actval= driver.switchTo().alert().getText();
+    driver.switchTo().alert().accept();
+    driver.findElement(By.xpath(Pr.getProperty("EHbutton"))).click();
+   if 
+   (Actval.contains(expval)) 
+   {
+	   System.out.println("Branch Created");
+	   return "pass";
+	  
+   }
+	   
+	   else
+	   {
+		   System.out.println("Branch already exist");
+		   return "pass";
+		   
+	}
+   
+   
+     
+}
+
+public String Rolecreation(String Rn,String Rt) throws InterruptedException
+{
+	expval ="Sucessfully";
+	  
+	    // Roles Creation
+	    driver.findElement(By.xpath(Pr.getProperty("Rbuttton"))).click();
+	    driver.findElement(By.id(Pr.getProperty("Nrolebutton"))).click();
+	    driver.findElement(By.id(Pr.getProperty("Rname"))).sendKeys(Rn);
+	    Select rolety=new Select(driver.findElement(By.id(Pr.getProperty("Rtype"))));
+	    rolety.selectByVisibleText(Rt);
+	    driver.findElement(By.id(Pr.getProperty("RSbutton"))).click();
+	    Thread.sleep(4000);
+	    Actval= driver.switchTo().alert().getText();
+	    driver.switchTo().alert().accept();
+	    driver.findElement(By.xpath(Pr.getProperty("RHbutton"))).click();
+	    if (Actval.contains(expval))
+	    {
+	    	System.out.println("Role Created");
+	    	return "pass";
+	    	   }
+	    else 
+	    	
+	    {
+	    	
+	    	System.out.println("Role already exist");
+	    	return "fail";
+	    	
+	  
+	    }
+	       
+	    
+	    	     
+	    // home
+	   
+	    
+}
+public String Employeecreation(String En, String Lpd, String Ro, String Br) throws InterruptedException
+
+{
+	 expval="Successfully";
+     
+	   	    // Employee Creation
+	    driver.findElement(By.xpath(Pr.getProperty("Ebutton"))).click();
+	    driver.findElement(By.id(Pr.getProperty("NEmpbutton"))).click();
+	    driver.findElement(By.id(Pr.getProperty("Empname"))).sendKeys(En);
+	    driver.findElement(By.id(Pr.getProperty("Lgpwd"))).sendKeys(Lpd);
+	    Select role=new Select(driver.findElement(By.id(Pr.getProperty("Erole"))));
+	    role.selectByVisibleText(Ro);
+	    Select branch=new Select(driver.findElement(By.id(Pr.getProperty("Ebranch"))));
+	    branch.selectByVisibleText(Br);
+	    driver.findElement(By.id(Pr.getProperty("ESbutton"))).click();
+	    Thread.sleep(4000);
+	    Actval= driver.switchTo().alert().getText();
+	    driver.switchTo().alert().accept();
+	    driver.findElement(By.xpath(Pr.getProperty("EHbutton"))).click();
+	    if (Actval.contains(expval))
+	    {
+	    	System.out.println("employee Created");
+	    	return "pass";
+	    	   }
+	    else 
+	    	
+	    {
+	    	
+	    	System.out.println("employee already exist");
+	    	return "fail";
+	  
+	    }
+	    	    	
+	        
+	    //home
+	   
+ 
+}
+public void Logout()
+{
+	driver.findElement(By.xpath(Pr.getProperty("Logout"))).click();
+}
+public void Close()
+{
+	 driver.close();
+}
+
+
+}
